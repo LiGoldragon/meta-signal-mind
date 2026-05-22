@@ -1,8 +1,8 @@
 use owner_signal_persona_mind::{
     AuthorityMode, ChoreographyMode, Configuration, ConfigurationRejected,
     ConfigurationRejectionReason, Configured, Frame, FrameBody, Inspection,
-    IntentSynchronizationMode, OperationKind, OwnerMindReply, OwnerMindRequest, PolicyRevision,
-    PolicySection, PolicySnapshot, RequestUnimplemented, UnimplementedReason,
+    IntentSynchronizationMode, Operation, OperationKind, OwnerMindReply, PolicyRevision,
+    PolicySection, PolicySnapshot, Request, RequestUnimplemented, UnimplementedReason,
 };
 use signal_frame::{
     ExchangeIdentifier, ExchangeLane, LaneSequence, NonEmpty, Reply, RequestPayload, SessionEpoch,
@@ -25,7 +25,7 @@ fn configuration() -> Configuration {
     }
 }
 
-fn round_trip_request(request: OwnerMindRequest) -> OwnerMindRequest {
+fn round_trip_request(request: Operation) -> Operation {
     let frame = Frame::new(FrameBody::Request {
         exchange: exchange(),
         request: request.into_request(),
@@ -59,10 +59,10 @@ fn round_trip_reply(reply: OwnerMindReply) -> OwnerMindReply {
 
 #[test]
 fn owner_mind_requests_round_trip() {
-    let configure = OwnerMindRequest::Configure(configuration());
+    let configure = Operation::Configure(configuration());
     assert_eq!(round_trip_request(configure.clone()), configure);
 
-    let inspect = OwnerMindRequest::Inspect(Inspection {
+    let inspect = Operation::Inspect(Inspection {
         section: PolicySection::All,
     });
     assert_eq!(round_trip_request(inspect.clone()), inspect);
@@ -97,7 +97,7 @@ fn owner_mind_replies_round_trip() {
 fn owner_mind_operations_encode_as_contract_local_nota_heads() {
     use nota_codec::{Decoder, Encoder, NotaDecode, NotaEncode};
 
-    let operation = OwnerMindRequest::Inspect(Inspection {
+    let operation = Operation::Inspect(Inspection {
         section: PolicySection::All,
     });
     let mut encoder = Encoder::new();
@@ -112,21 +112,17 @@ fn owner_mind_operations_encode_as_contract_local_nota_heads() {
     assert!(!text.contains("Match"));
 
     let mut decoder = Decoder::new(&text);
-    let decoded =
-        owner_signal_persona_mind::OwnerMindChannelRequest::decode(&mut decoder).expect("decode");
-    assert_eq!(
-        decoded.payloads().head().operation_kind(),
-        OperationKind::Inspect
-    );
+    let decoded = Request::decode(&mut decoder).expect("decode");
+    assert_eq!(decoded.payloads().head().kind(), OperationKind::Inspect);
 }
 
 #[test]
 fn owner_mind_request_exposes_contract_owned_operation_kind() {
-    let configure = OwnerMindRequest::Configure(configuration());
-    assert_eq!(configure.operation_kind(), OperationKind::Configure);
+    let configure = Operation::Configure(configuration());
+    assert_eq!(configure.kind(), OperationKind::Configure);
 
-    let inspect = OwnerMindRequest::Inspect(Inspection {
+    let inspect = Operation::Inspect(Inspection {
         section: PolicySection::Authority,
     });
-    assert_eq!(inspect.operation_kind(), OperationKind::Inspect);
+    assert_eq!(inspect.kind(), OperationKind::Inspect);
 }

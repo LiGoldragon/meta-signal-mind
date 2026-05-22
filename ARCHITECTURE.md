@@ -59,7 +59,8 @@ This repo owns:
 - owner-only operation roots and payload records;
 - owner-only replies and rejection reasons;
 - rkyv and NOTA round-trip shape for the policy signal;
-- the contract-local operation-kind witness.
+- the contract-local `OperationKind` witness emitted by
+  `signal_channel!`.
 
 This repo does not own:
 
@@ -86,10 +87,11 @@ This repo does not own:
 
 `tests/round_trip.rs` proves:
 
-- request operations round-trip through `OwnerMindFrame`;
-- replies round-trip through `OwnerMindFrame`;
+- request operations round-trip through `Frame`;
+- replies round-trip through `Frame`;
 - NOTA request heads are contract-local verbs;
-- the public request exposes a contract-owned `OperationKind`.
+- the public operation exposes a contract-owned `OperationKind` through
+  the generated `kind()` method.
 
 ## Code Map
 

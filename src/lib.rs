@@ -113,14 +113,6 @@ pub enum ConfigurationRejectionReason {
 #[derive(
     Archive, RkyvSerialize, RkyvDeserialize, NotaEnum, Debug, Clone, Copy, PartialEq, Eq, Hash,
 )]
-pub enum OperationKind {
-    Configure,
-    Inspect,
-}
-
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEnum, Debug, Clone, Copy, PartialEq, Eq, Hash,
-)]
 pub enum UnimplementedReason {
     NotBuiltYet,
     DependencyNotReady,
@@ -146,54 +138,14 @@ signal_channel! {
     }
 }
 
-pub type OwnerMindRequest = OwnerMindOperation;
-pub type Frame = OwnerMindFrame;
-pub type FrameBody = OwnerMindFrameBody;
-pub type ChannelRequest = OwnerMindChannelRequest;
-pub type ChannelReply = OwnerMindChannelReply;
-pub type RequestBuilder = OwnerMindRequestBuilder;
-
-impl OwnerMindOperation {
-    pub fn operation_kind(&self) -> OperationKind {
-        match self {
-            Self::Configure(_) => OperationKind::Configure,
-            Self::Inspect(_) => OperationKind::Inspect,
-        }
-    }
-}
-
-impl From<Configuration> for OwnerMindRequest {
+impl From<Configuration> for Operation {
     fn from(payload: Configuration) -> Self {
         Self::Configure(payload)
     }
 }
 
-impl From<Inspection> for OwnerMindRequest {
+impl From<Inspection> for Operation {
     fn from(payload: Inspection) -> Self {
         Self::Inspect(payload)
-    }
-}
-
-impl From<Configured> for OwnerMindReply {
-    fn from(payload: Configured) -> Self {
-        Self::Configured(payload)
-    }
-}
-
-impl From<PolicySnapshot> for OwnerMindReply {
-    fn from(payload: PolicySnapshot) -> Self {
-        Self::PolicySnapshot(payload)
-    }
-}
-
-impl From<ConfigurationRejected> for OwnerMindReply {
-    fn from(payload: ConfigurationRejected) -> Self {
-        Self::ConfigurationRejected(payload)
-    }
-}
-
-impl From<RequestUnimplemented> for OwnerMindReply {
-    fn from(payload: RequestUnimplemented) -> Self {
-        Self::RequestUnimplemented(payload)
     }
 }
