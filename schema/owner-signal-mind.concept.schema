@@ -1,0 +1,35 @@
+{}
+
+[]
+
+[
+  (Configure [Policy])
+  (Inspect [State])
+]
+
+[]
+
+{
+  Configure [(Policy Policy)]
+  Inspect [(State State)]
+  Thought (Text)
+  Relation (Text)
+  Note (Text)
+  Thoughts (Text)
+  Relations (Text)
+  Channels (Text)
+  Subscription (Identifier)
+  Change (Text)
+  Policy (Text)
+  State (Text)
+  Text (String)
+  Identifier (u64)
+  Name (String)
+  Path (String)
+  Status [Concept Active Retired]
+}
+
+[
+  (Version 0 1)
+  (Status Concept)
+]
