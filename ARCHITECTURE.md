@@ -1,4 +1,4 @@
-# owner-signal-persona-mind — architecture
+# owner-signal-mind — architecture
 
 *Owner-only Signal contract for PersonaMind policy and configuration.*
 
@@ -6,13 +6,13 @@
 
 ## 0 · TL;DR
 
-`owner-signal-persona-mind` is the policy signal for PersonaMind.
+`owner-signal-mind` is the policy signal for PersonaMind.
 PersonaSpirit owns PersonaMind, so this contract is the typed
 authority surface Spirit uses to configure Mind's policy state.
 
 Ordinary mind graph, work graph, query, and subscription traffic stays
-in `signal-persona-mind`. Runtime actors, policy evaluation, store
-tables, socket binding, and command lowering live in `persona-mind`.
+in `signal-mind`. Runtime actors, policy evaluation, store
+tables, socket binding, and command lowering live in `mind`.
 This repository owns only the owner-only wire vocabulary.
 
 The initial surface is deliberately small:
@@ -64,10 +64,10 @@ This repo owns:
 
 This repo does not own:
 
-- `persona-mind` daemon actors;
+- `mind` daemon actors;
 - `mind.redb`;
 - `bootstrap-policy.nota`;
-- ordinary `signal-persona-mind` graph/work/query/subscription traffic;
+- ordinary `signal-mind` graph/work/query/subscription traffic;
 - router channel grant execution;
 - Spirit's runtime logic for deciding what policy to issue;
 - CLI argv parsing or socket permissions.
@@ -102,8 +102,8 @@ tests/round_trip.rs   frame round trips and contract-local operation witnesses
 
 ## See Also
 
-- `../signal-persona-mind/ARCHITECTURE.md`
-- `../persona-mind/ARCHITECTURE.md`
+- `../signal-mind/ARCHITECTURE.md`
+- `../mind/ARCHITECTURE.md`
 - `../persona-spirit/ARCHITECTURE.md`
 - `../signal-frame/ARCHITECTURE.md`
 - `../signal-sema/ARCHITECTURE.md`

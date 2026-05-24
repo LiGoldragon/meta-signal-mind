@@ -1,4 +1,4 @@
-# skills — owner-signal-persona-mind
+# skills — owner-signal-mind
 
 Before editing, read:
 
@@ -9,8 +9,8 @@ Before editing, read:
 - `~/primary/skills/architectural-truth-tests.md`
 - `~/primary/skills/nix-discipline.md`
 - this repo's `ARCHITECTURE.md`
-- `../signal-persona-mind/ARCHITECTURE.md`
-- `../persona-mind/ARCHITECTURE.md`
+- `../signal-mind/ARCHITECTURE.md`
+- `../mind/ARCHITECTURE.md`
 - `../persona-spirit/ARCHITECTURE.md`
 
 This repo owns only the owner-only PersonaMind policy signal vocabulary.

@@ -1,7 +1,7 @@
 //! OwnerSignal contract for privileged PersonaMind policy.
 //!
 //! Ordinary mind graph, work graph, and subscription traffic lives in
-//! `signal-persona-mind`. This crate carries owner-only policy and
+//! `signal-mind`. This crate carries owner-only policy and
 //! configuration operations issued by PersonaSpirit.
 
 use nota_codec::{NotaEnum, NotaRecord, NotaTransparent};

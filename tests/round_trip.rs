@@ -1,4 +1,4 @@
-use owner_signal_persona_mind::{
+use owner_signal_mind::{
     AuthorityMode, ChoreographyMode, Configuration, ConfigurationRejected,
     ConfigurationRejectionReason, Configured, Frame, FrameBody, Inspection,
     IntentSynchronizationMode, Operation, OperationKind, OwnerMindReply, PolicyRevision,
