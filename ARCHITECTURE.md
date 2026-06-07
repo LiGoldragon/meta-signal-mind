@@ -2,8 +2,6 @@
 
 *Owner-only Signal contract for PersonaMind policy and configuration.*
 
----
-
 ## 0 · TL;DR
 
 `owner-signal-mind` is the policy signal for PersonaMind.

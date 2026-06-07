@@ -95,24 +95,18 @@ fn owner_mind_replies_round_trip() {
 
 #[test]
 fn owner_mind_operations_encode_as_contract_local_nota_heads() {
-    use nota_codec::{Decoder, Encoder, NotaDecode, NotaEncode};
+    use nota_next::{NotaEncode, NotaSource};
 
     let operation = Operation::Inspect(Inspection {
         section: PolicySection::All,
     });
-    let mut encoder = Encoder::new();
-    operation
-        .into_request()
-        .encode(&mut encoder)
-        .expect("encode");
-    let text = encoder.into_string();
+    let text = operation.into_request().to_nota();
 
     assert_eq!(text, "(Inspect (All))");
     assert!(!text.contains("Mutate"));
     assert!(!text.contains("Match"));
 
-    let mut decoder = Decoder::new(&text);
-    let decoded = Request::decode(&mut decoder).expect("decode");
+    let decoded = NotaSource::new(&text).parse::<Request>().expect("decode");
     assert_eq!(decoded.payloads().head().kind(), OperationKind::Inspect);
 }
 

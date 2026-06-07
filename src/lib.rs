@@ -4,7 +4,7 @@
 //! `signal-mind`. This crate carries owner-only policy and
 //! configuration operations issued by PersonaSpirit.
 
-use nota_codec::{NotaEnum, NotaRecord, NotaTransparent};
+use nota_next::{Block, NotaBlock, NotaDecode, NotaDecodeError, NotaEncode};
 use rkyv::{Archive, Deserialize as RkyvDeserialize, Serialize as RkyvSerialize};
 use signal_frame::signal_channel;
 
@@ -12,7 +12,6 @@ use signal_frame::signal_channel;
     Archive,
     RkyvSerialize,
     RkyvDeserialize,
-    NotaTransparent,
     Debug,
     Clone,
     Copy,
@@ -34,8 +33,30 @@ impl PolicyRevision {
     }
 }
 
+impl NotaDecode for PolicyRevision {
+    fn from_nota_block(block: &Block) -> Result<Self, NotaDecodeError> {
+        Ok(Self(NotaBlock::new(block).parse_integer()?))
+    }
+}
+
+impl NotaEncode for PolicyRevision {
+    fn to_nota(&self) -> String {
+        self.0.to_string()
+    }
+}
+
 #[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEnum, Debug, Clone, Copy, PartialEq, Eq, Hash,
+    Archive,
+    RkyvSerialize,
+    RkyvDeserialize,
+    NotaEncode,
+    NotaDecode,
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    Hash,
 )]
 pub enum AuthorityMode {
     ObserveOnly,
@@ -44,7 +65,17 @@ pub enum AuthorityMode {
 }
 
 #[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEnum, Debug, Clone, Copy, PartialEq, Eq, Hash,
+    Archive,
+    RkyvSerialize,
+    RkyvDeserialize,
+    NotaEncode,
+    NotaDecode,
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    Hash,
 )]
 pub enum ChoreographyMode {
     RecordOnly,
@@ -53,7 +84,17 @@ pub enum ChoreographyMode {
 }
 
 #[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEnum, Debug, Clone, Copy, PartialEq, Eq, Hash,
+    Archive,
+    RkyvSerialize,
+    RkyvDeserialize,
+    NotaEncode,
+    NotaDecode,
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    Hash,
 )]
 pub enum IntentSynchronizationMode {
     Disabled,
@@ -61,7 +102,9 @@ pub enum IntentSynchronizationMode {
     FullRecord,
 }
 
-#[derive(Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, PartialEq, Eq)]
+#[derive(
+    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+)]
 pub struct Configuration {
     pub authority: AuthorityMode,
     pub choreography: ChoreographyMode,
@@ -69,7 +112,17 @@ pub struct Configuration {
 }
 
 #[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEnum, Debug, Clone, Copy, PartialEq, Eq, Hash,
+    Archive,
+    RkyvSerialize,
+    RkyvDeserialize,
+    NotaEncode,
+    NotaDecode,
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    Hash,
 )]
 pub enum PolicySection {
     Authority,
@@ -79,30 +132,55 @@ pub enum PolicySection {
 }
 
 #[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, Copy, PartialEq, Eq,
+    Archive,
+    RkyvSerialize,
+    RkyvDeserialize,
+    NotaEncode,
+    NotaDecode,
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
 )]
 pub struct Inspection {
     pub section: PolicySection,
 }
 
-#[derive(Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, PartialEq, Eq)]
+#[derive(
+    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+)]
 pub struct Configured {
     pub revision: PolicyRevision,
 }
 
-#[derive(Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, PartialEq, Eq)]
+#[derive(
+    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+)]
 pub struct PolicySnapshot {
     pub revision: PolicyRevision,
     pub configuration: Configuration,
 }
 
-#[derive(Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, PartialEq, Eq)]
+#[derive(
+    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+)]
 pub struct ConfigurationRejected {
     pub reason: ConfigurationRejectionReason,
 }
 
 #[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEnum, Debug, Clone, Copy, PartialEq, Eq, Hash,
+    Archive,
+    RkyvSerialize,
+    RkyvDeserialize,
+    NotaEncode,
+    NotaDecode,
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    Hash,
 )]
 pub enum ConfigurationRejectionReason {
     SpiritAuthorityRequired,
@@ -111,7 +189,17 @@ pub enum ConfigurationRejectionReason {
 }
 
 #[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEnum, Debug, Clone, Copy, PartialEq, Eq, Hash,
+    Archive,
+    RkyvSerialize,
+    RkyvDeserialize,
+    NotaEncode,
+    NotaDecode,
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    Hash,
 )]
 pub enum UnimplementedReason {
     NotBuiltYet,
@@ -119,7 +207,9 @@ pub enum UnimplementedReason {
     PolicyStoreUnavailable,
 }
 
-#[derive(Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, PartialEq, Eq)]
+#[derive(
+    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+)]
 pub struct RequestUnimplemented {
     pub operation: OperationKind,
     pub reason: UnimplementedReason,
