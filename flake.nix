@@ -1,5 +1,5 @@
 {
-  description = "owner-signal-mind - OwnerSignal contract for PersonaMind policy";
+  description = "meta-signal-mind - meta signal contract for PersonaMind policy";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
@@ -71,7 +71,7 @@
           );
         };
         devShells.default = pkgs.mkShell {
-          name = "owner-signal-mind";
+          name = "meta-signal-mind";
           packages = [
             pkgs.jujutsu
             pkgs.pkg-config

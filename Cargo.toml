@@ -1,16 +1,20 @@
 [package]
-name         = "owner-signal-mind"
+name         = "meta-signal-mind"
 version      = "0.1.0"
 edition      = "2024"
 rust-version = "1.85"
 license      = "MIT OR Apache-2.0"
-repository   = "https://github.com/LiGoldragon/owner-signal-mind"
-description  = "OwnerSignal contract for privileged PersonaMind policy."
+repository   = "https://github.com/LiGoldragon/meta-signal-mind"
+description  = "Meta signal contract for privileged PersonaMind policy."
 publish      = false
 
 [lib]
-name = "owner_signal_mind"
+name = "meta_signal_mind"
 path = "src/lib.rs"
+
+[features]
+default = ["nota-text"]
+nota-text = ["signal-frame/nota-text"]
 
 [dependencies]
 signal-frame = { git = "https://github.com/LiGoldragon/signal-frame.git", branch = "main" }

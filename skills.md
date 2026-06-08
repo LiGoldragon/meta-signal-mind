@@ -1,4 +1,4 @@
-# skills — owner-signal-mind
+# skills — meta-signal-mind
 
 Before editing, read:
 
@@ -13,6 +13,6 @@ Before editing, read:
 - `../mind/ARCHITECTURE.md`
 - `../persona-spirit/ARCHITECTURE.md`
 
-This repo owns only the owner-only PersonaMind policy signal vocabulary.
+This repo owns only the meta PersonaMind policy signal vocabulary.
 It contains no daemon, no database tables, no actor runtime, no CLI
 parser, and no policy evaluation logic.

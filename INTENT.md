@@ -1,20 +1,20 @@
-# INTENT — owner-signal-mind
+# INTENT — meta-signal-mind
 
-*The owner-only wire contract for PersonaMind policy and configuration. Defines
+*The meta policy wire contract for PersonaMind policy and configuration. Defines
 the typed request/reply channel that PersonaSpirit (Mind's owner) uses to
-configure Mind's policy state and read owner-only policy.
+configure Mind's policy state and read privileged policy.
 Companion to `ARCHITECTURE.md` and `Cargo.toml`. Maintenance: `primary/skills/repo-intent.md`.*
 
 ## Repo-scope only
 
-This file carries only the intent that is FOR this owner-only `owner-signal-mind`
+This file carries only the intent that is FOR this meta `meta-signal-mind`
 contract. Workspace-shape intent stays in the primary workspace `primary/INTENT.md`.
 Component daemon intent stays in `mind/INTENT.md`. Ordinary mind graph/work/query/
 subscription traffic stays in `signal-mind/INTENT.md`.
 
 ## Why this repo exists
 
-`owner-signal-mind` is the **owner-only policy signal** for PersonaMind.
+`meta-signal-mind` is the **meta policy signal** for PersonaMind.
 PersonaSpirit owns PersonaMind, so this contract is the typed authority surface
 Spirit uses to configure Mind's policy state. Ordinary mind graph, work graph,
 query, and subscription traffic stays in `signal-mind`; runtime actors, policy
@@ -22,10 +22,10 @@ evaluation, store tables, socket binding, and command lowering live in `mind`.
 
 ## The channel shape
 
-The owner channel carries a deliberately small initial surface:
+The meta channel carries a deliberately small initial surface:
 
-- **Requests:** `Configure(Configuration)` mutates owner-controlled policy
-  state; `Inspect(Inspection)` reads owner-only policy state.
+- **Requests:** `Configure(Configuration)` mutates meta-controlled policy
+  state; `Inspect(Inspection)` reads privileged policy state.
 - **Replies:** `Configured` (a new policy revision was recorded),
   `PolicySnapshot` (requested policy state returned), `ConfigurationRejected`
   (understood but rejected by domain policy), `RequestUnimplemented` (in the
@@ -39,7 +39,7 @@ policy-shaped — not working graph records, not thoughts, not channel grants.
 
 ## Constraints
 
-- The contract exposes owner-only policy operations, not ordinary mind graph
+- The contract exposes meta policy operations, not ordinary mind graph
   operations.
 - Every operation root is a contract-local verb in verb form. The wire shape
   contains no public Sema wrapper such as `Mutate` or `Match`; the Sema class is

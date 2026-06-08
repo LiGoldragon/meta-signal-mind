@@ -1,7 +1,7 @@
-//! OwnerSignal contract for privileged PersonaMind policy.
+//! Meta signal contract for privileged PersonaMind policy.
 //!
 //! Ordinary mind graph, work graph, and subscription traffic lives in
-//! `signal-mind`. This crate carries owner-only policy and
+//! `signal-mind`. This crate carries meta policy and
 //! configuration operations issued by PersonaSpirit.
 
 use nota_next::{Block, NotaBlock, NotaDecode, NotaDecodeError, NotaEncode};
@@ -216,11 +216,11 @@ pub struct RequestUnimplemented {
 }
 
 signal_channel! {
-    channel OwnerMind {
+    channel MetaMind {
         operation Configure(Configuration),
         operation Inspect(Inspection),
     }
-    reply OwnerMindReply {
+    reply MetaMindReply {
         Configured(Configured),
         PolicySnapshot(PolicySnapshot),
         ConfigurationRejected(ConfigurationRejected),

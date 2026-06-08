@@ -1,29 +1,29 @@
-# owner-signal-mind — architecture
+# meta-signal-mind — architecture
 
-*Owner-only Signal contract for PersonaMind policy and configuration.*
+*Meta signal contract for PersonaMind policy and configuration.*
 
 ## 0 · TL;DR
 
-`owner-signal-mind` is the policy signal for PersonaMind.
+`meta-signal-mind` is the policy signal for PersonaMind.
 PersonaSpirit owns PersonaMind, so this contract is the typed
 authority surface Spirit uses to configure Mind's policy state.
 
 Ordinary mind graph, work graph, query, and subscription traffic stays
 in `signal-mind`. Runtime actors, policy evaluation, store
 tables, socket binding, and command lowering live in `mind`.
-This repository owns only the owner-only wire vocabulary.
+This repository owns only the meta policy wire vocabulary.
 
 The initial surface is deliberately small:
 
-- `Configure(Configuration)` mutates owner-controlled policy state.
-- `Inspect(Inspection)` reads owner-only policy state.
+- `Configure(Configuration)` mutates meta-controlled policy state.
+- `Inspect(Inspection)` reads privileged policy state.
 
 ## 1 · Contract Surface
 
 | Operation | Projected Sema class | Meaning |
 |---|---|---|
 | `Configure` | `Mutate` | Apply a Spirit-issued policy configuration to PersonaMind. |
-| `Inspect` | `Match` | Read owner-only policy state. |
+| `Inspect` | `Match` | Read privileged policy state. |
 
 | Reply | Meaning |
 |---|---|
@@ -54,8 +54,8 @@ graph records, not thoughts, and not channel grants.
 
 This repo owns:
 
-- owner-only operation roots and payload records;
-- owner-only replies and rejection reasons;
+- meta operation roots and payload records;
+- meta replies and rejection reasons;
 - rkyv and NOTA round-trip shape for the policy signal;
 - the contract-local `OperationKind` witness emitted by
   `signal_channel!`.
@@ -72,7 +72,7 @@ This repo does not own:
 
 ## 4 · Constraints
 
-- The contract exposes owner-only policy operations, not ordinary mind
+- The contract exposes meta policy operations, not ordinary mind
   graph operations.
 - Every operation root is a contract-local verb in verb form.
 - The wire shape contains no public Sema wrapper such as `Mutate` or
@@ -94,7 +94,7 @@ This repo does not own:
 ## Code Map
 
 ```text
-src/lib.rs            owner policy types and signal_channel! declaration
+src/lib.rs            meta policy types and signal_channel! declaration
 tests/round_trip.rs   frame round trips and contract-local operation witnesses
 ```
 
