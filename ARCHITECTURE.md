@@ -56,9 +56,9 @@ This repo owns:
 
 - meta operation roots and payload records;
 - meta replies and rejection reasons;
-- rkyv and NOTA round-trip shape for the policy signal;
-- the contract-local `OperationKind` witness emitted by
-  `signal_channel!`.
+- the schema source and checked-in generated Rust contract;
+- rkyv and optional NOTA round-trip shape for the policy signal;
+- the contract-local `OperationKind` witness emitted by the schema generator.
 
 This repo does not own:
 
@@ -94,7 +94,9 @@ This repo does not own:
 ## Code Map
 
 ```text
-src/lib.rs            meta policy types and signal_channel! declaration
+schema/lib.schema     meta policy wire vocabulary
+src/schema/lib.rs     checked-in schema-rust-next generated contract
+src/lib.rs            small compatibility aliases and accessors
 tests/round_trip.rs   frame round trips and contract-local operation witnesses
 ```
 

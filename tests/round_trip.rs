@@ -2,7 +2,7 @@ use meta_signal_mind::{
     AuthorityMode, ChoreographyMode, Configuration, ConfigurationRejected,
     ConfigurationRejectionReason, Configured, Frame, FrameBody, Inspection,
     IntentSynchronizationMode, MetaMindReply, Operation, OperationKind, PolicyRevision,
-    PolicySection, PolicySnapshot, Request, RequestUnimplemented, UnimplementedReason,
+    PolicySection, PolicySnapshot, RequestUnimplemented, UnimplementedReason,
 };
 use signal_frame::{
     ExchangeIdentifier, ExchangeLane, LaneSequence, NonEmpty, Reply, RequestPayload, SessionEpoch,
@@ -62,17 +62,13 @@ fn meta_mind_requests_round_trip() {
     let configure = Operation::Configure(configuration());
     assert_eq!(round_trip_request(configure.clone()), configure);
 
-    let inspect = Operation::Inspect(Inspection {
-        section: PolicySection::All,
-    });
+    let inspect = Operation::Inspect(Inspection::new(PolicySection::All));
     assert_eq!(round_trip_request(inspect.clone()), inspect);
 }
 
 #[test]
 fn meta_mind_replies_round_trip() {
-    let configured = MetaMindReply::Configured(Configured {
-        revision: PolicyRevision::new(7),
-    });
+    let configured = MetaMindReply::Configured(Configured::new(PolicyRevision::new(7)));
     assert_eq!(round_trip_reply(configured.clone()), configured);
 
     let snapshot = MetaMindReply::PolicySnapshot(PolicySnapshot {
@@ -81,9 +77,9 @@ fn meta_mind_replies_round_trip() {
     });
     assert_eq!(round_trip_reply(snapshot.clone()), snapshot);
 
-    let rejected = MetaMindReply::ConfigurationRejected(ConfigurationRejected {
-        reason: ConfigurationRejectionReason::PolicyWouldBreakChoreography,
-    });
+    let rejected = MetaMindReply::ConfigurationRejected(ConfigurationRejected::new(
+        ConfigurationRejectionReason::PolicyWouldBreakChoreography,
+    ));
     assert_eq!(round_trip_reply(rejected.clone()), rejected);
 
     let unimplemented = MetaMindReply::RequestUnimplemented(RequestUnimplemented {
@@ -93,16 +89,16 @@ fn meta_mind_replies_round_trip() {
     assert_eq!(round_trip_reply(unimplemented.clone()), unimplemented);
 }
 
+#[cfg(feature = "nota-text")]
 #[test]
 fn meta_mind_operations_encode_as_contract_local_nota_heads() {
+    use meta_signal_mind::Request;
     use nota_next::{NotaEncode, NotaSource};
 
-    let operation = Operation::Inspect(Inspection {
-        section: PolicySection::All,
-    });
+    let operation = Operation::Inspect(Inspection::new(PolicySection::All));
     let text = operation.into_request().to_nota();
 
-    assert_eq!(text, "(Inspect (All))");
+    assert_eq!(text, "(Inspect All)");
     assert!(!text.contains("Mutate"));
     assert!(!text.contains("Match"));
 
@@ -115,8 +111,6 @@ fn meta_mind_request_exposes_contract_owned_operation_kind() {
     let configure = Operation::Configure(configuration());
     assert_eq!(configure.kind(), OperationKind::Configure);
 
-    let inspect = Operation::Inspect(Inspection {
-        section: PolicySection::Authority,
-    });
+    let inspect = Operation::Inspect(Inspection::new(PolicySection::Authority));
     assert_eq!(inspect.kind(), OperationKind::Inspect);
 }

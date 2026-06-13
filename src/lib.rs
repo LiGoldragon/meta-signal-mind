@@ -1,241 +1,28 @@
-//! Meta signal contract for privileged PersonaMind policy.
+//! Schema-derived meta signal contract for privileged PersonaMind policy.
 //!
 //! Ordinary mind graph, work graph, and subscription traffic lives in
 //! `signal-mind`. This crate carries meta policy and
 //! configuration operations issued by PersonaSpirit.
 
-use nota_next::{Block, NotaBlock, NotaDecode, NotaDecodeError, NotaEncode};
-use rkyv::{Archive, Deserialize as RkyvDeserialize, Serialize as RkyvSerialize};
-use signal_frame::signal_channel;
+#[rustfmt::skip]
+pub mod schema;
 
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    Debug,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    Hash,
-    PartialOrd,
-    Ord,
-)]
-pub struct PolicyRevision(u64);
+pub use schema::lib::*;
 
 impl PolicyRevision {
-    pub const fn new(value: u64) -> Self {
-        Self(value)
-    }
-
-    pub const fn value(self) -> u64 {
-        self.0
+    pub fn value(&self) -> u64 {
+        *self.payload()
     }
 }
 
-impl NotaDecode for PolicyRevision {
-    fn from_nota_block(block: &Block) -> Result<Self, NotaDecodeError> {
-        Ok(Self(NotaBlock::new(block).parse_integer()?))
+impl Input {
+    pub fn kind(&self) -> OperationKind {
+        match self {
+            Self::Configure(_) => OperationKind::Configure,
+            Self::Inspect(_) => OperationKind::Inspect,
+        }
     }
 }
 
-impl NotaEncode for PolicyRevision {
-    fn to_nota(&self) -> String {
-        self.0.to_string()
-    }
-}
-
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    NotaEncode,
-    NotaDecode,
-    Debug,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    Hash,
-)]
-pub enum AuthorityMode {
-    ObserveOnly,
-    ProposeOrders,
-    IssueOrders,
-}
-
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    NotaEncode,
-    NotaDecode,
-    Debug,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    Hash,
-)]
-pub enum ChoreographyMode {
-    RecordOnly,
-    Recommend,
-    Decide,
-}
-
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    NotaEncode,
-    NotaDecode,
-    Debug,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    Hash,
-)]
-pub enum IntentSynchronizationMode {
-    Disabled,
-    SummaryOnly,
-    FullRecord,
-}
-
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
-)]
-pub struct Configuration {
-    pub authority: AuthorityMode,
-    pub choreography: ChoreographyMode,
-    pub intent_synchronization: IntentSynchronizationMode,
-}
-
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    NotaEncode,
-    NotaDecode,
-    Debug,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    Hash,
-)]
-pub enum PolicySection {
-    Authority,
-    Choreography,
-    IntentSynchronization,
-    All,
-}
-
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    NotaEncode,
-    NotaDecode,
-    Debug,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-)]
-pub struct Inspection {
-    pub section: PolicySection,
-}
-
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
-)]
-pub struct Configured {
-    pub revision: PolicyRevision,
-}
-
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
-)]
-pub struct PolicySnapshot {
-    pub revision: PolicyRevision,
-    pub configuration: Configuration,
-}
-
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
-)]
-pub struct ConfigurationRejected {
-    pub reason: ConfigurationRejectionReason,
-}
-
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    NotaEncode,
-    NotaDecode,
-    Debug,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    Hash,
-)]
-pub enum ConfigurationRejectionReason {
-    SpiritAuthorityRequired,
-    PolicyWouldBreakChoreography,
-    IntentSynchronizationUnavailable,
-}
-
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    NotaEncode,
-    NotaDecode,
-    Debug,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    Hash,
-)]
-pub enum UnimplementedReason {
-    NotBuiltYet,
-    DependencyNotReady,
-    PolicyStoreUnavailable,
-}
-
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
-)]
-pub struct RequestUnimplemented {
-    pub operation: OperationKind,
-    pub reason: UnimplementedReason,
-}
-
-signal_channel! {
-    channel MetaMind {
-        operation Configure(Configuration),
-        operation Inspect(Inspection),
-    }
-    reply MetaMindReply {
-        Configured(Configured),
-        PolicySnapshot(PolicySnapshot),
-        ConfigurationRejected(ConfigurationRejected),
-        RequestUnimplemented(RequestUnimplemented),
-    }
-}
-
-impl From<Configuration> for Operation {
-    fn from(payload: Configuration) -> Self {
-        Self::Configure(payload)
-    }
-}
-
-impl From<Inspection> for Operation {
-    fn from(payload: Inspection) -> Self {
-        Self::Inspect(payload)
-    }
-}
+pub type Operation = Input;
+pub type MetaMindReply = Output;

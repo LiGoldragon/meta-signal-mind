@@ -1,0 +1,79 @@
+;; meta-signal-mind — meta-only policy/configuration wire contract
+;; for PersonaMind.
+;;
+;; Wire-only: emits the rkyv + optional NOTA codec and the signal-frame
+;; request/reply envelope. Ordinary mind graph, work graph, query, and
+;; subscription traffic stays in signal-mind; runtime actors, policy
+;; evaluation, durable state, socket binding, and command lowering live in
+;; mind.
+
+[(Configure Configuration)
+ (Inspect Inspection)]
+[(Configured Configured)
+ (PolicySnapshot PolicySnapshot)
+ (ConfigurationRejected ConfigurationRejected)
+ (RequestUnimplemented RequestUnimplemented)]
+{
+  PolicyRevision {
+    value Integer
+  }
+  Configured {
+    revision PolicyRevision
+  }
+
+  AuthorityMode [
+    ObserveOnly
+    ProposeOrders
+    IssueOrders
+  ]
+  ChoreographyMode [
+    RecordOnly
+    Recommend
+    Decide
+  ]
+  IntentSynchronizationMode [
+    Disabled
+    SummaryOnly
+    FullRecord
+  ]
+  Configuration {
+    authority AuthorityMode
+    choreography ChoreographyMode
+    intent_synchronization IntentSynchronizationMode
+  }
+
+  PolicySection [
+    Authority
+    Choreography
+    IntentSynchronization
+    All
+  ]
+  Inspection {
+    section PolicySection
+  }
+
+  PolicySnapshot {
+    revision PolicyRevision
+    configuration Configuration
+  }
+
+  ConfigurationRejectionReason [
+    SpiritAuthorityRequired
+    PolicyWouldBreakChoreography
+    IntentSynchronizationUnavailable
+  ]
+  ConfigurationRejected {
+    reason ConfigurationRejectionReason
+  }
+
+  OperationKind [Configure Inspect]
+  UnimplementedReason [
+    NotBuiltYet
+    DependencyNotReady
+    PolicyStoreUnavailable
+  ]
+  RequestUnimplemented {
+    operation OperationKind
+    reason UnimplementedReason
+  }
+}

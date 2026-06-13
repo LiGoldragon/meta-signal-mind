@@ -45,8 +45,8 @@ policy-shaped — not working graph records, not thoughts, not channel grants.
   contains no public Sema wrapper such as `Mutate` or `Match`; the Sema class is
   a daemon-side projection, derived internally.
 - Wire enums are closed. No `Unknown` escape hatch.
-- This crate carries only typed wire vocabulary, NOTA codecs, and round-trip
-  witnesses — no runtime, no actors, no `tokio`.
+- This crate carries only typed wire vocabulary, rkyv codecs, optional NOTA
+  codecs, and round-trip witnesses — no runtime, no actors, no `tokio`.
 - Every operation and reply round-trips through both rkyv frames and NOTA text.
 
 ## Non-ownership
