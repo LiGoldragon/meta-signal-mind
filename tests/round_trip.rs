@@ -59,10 +59,10 @@ fn round_trip_reply(reply: MetaMindReply) -> MetaMindReply {
 
 #[test]
 fn meta_mind_requests_round_trip() {
-    let configure = Operation::Configure(configuration());
+    let configure = Operation::configure(configuration());
     assert_eq!(round_trip_request(configure.clone()), configure);
 
-    let inspect = Operation::Inspect(Inspection::new(PolicySection::All));
+    let inspect = Operation::inspect(Inspection::new(PolicySection::All));
     assert_eq!(round_trip_request(inspect.clone()), inspect);
 }
 
@@ -95,7 +95,7 @@ fn meta_mind_operations_encode_as_contract_local_nota_heads() {
     use meta_signal_mind::Request;
     use nota_next::{NotaEncode, NotaSource};
 
-    let operation = Operation::Inspect(Inspection::new(PolicySection::All));
+    let operation = Operation::inspect(Inspection::new(PolicySection::All));
     let text = operation.into_request().to_nota();
 
     assert_eq!(text, "(Inspect All)");
@@ -108,9 +108,9 @@ fn meta_mind_operations_encode_as_contract_local_nota_heads() {
 
 #[test]
 fn meta_mind_request_exposes_contract_owned_operation_kind() {
-    let configure = Operation::Configure(configuration());
+    let configure = Operation::configure(configuration());
     assert_eq!(configure.kind(), OperationKind::Configure);
 
-    let inspect = Operation::Inspect(Inspection::new(PolicySection::Authority));
+    let inspect = Operation::inspect(Inspection::new(PolicySection::Authority));
     assert_eq!(inspect.kind(), OperationKind::Inspect);
 }

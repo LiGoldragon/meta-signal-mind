@@ -7,19 +7,13 @@
 ;; evaluation, durable state, socket binding, and command lowering live in
 ;; mind.
 
-[(Configure Configuration)
- (Inspect Inspection)]
-[(Configured Configured)
- (PolicySnapshot PolicySnapshot)
- (ConfigurationRejected ConfigurationRejected)
- (RequestUnimplemented RequestUnimplemented)]
+[Configure Inspect]
+[Configured PolicySnapshot ConfigurationRejected RequestUnimplemented]
 {
-  PolicyRevision {
-    value Integer
-  }
-  Configured {
-    revision PolicyRevision
-  }
+  Configure Configuration
+  Inspect Inspection
+
+  Configured PolicyRevision
 
   AuthorityMode [
     ObserveOnly
@@ -37,9 +31,9 @@
     FullRecord
   ]
   Configuration {
-    authority AuthorityMode
-    choreography ChoreographyMode
-    intent_synchronization IntentSynchronizationMode
+    authority.AuthorityMode
+    choreography.ChoreographyMode
+    intent_synchronization.IntentSynchronizationMode
   }
 
   PolicySection [
@@ -48,13 +42,11 @@
     IntentSynchronization
     All
   ]
-  Inspection {
-    section PolicySection
-  }
+  Inspection PolicySection
 
   PolicySnapshot {
-    revision PolicyRevision
-    configuration Configuration
+    revision.PolicyRevision
+    Configuration
   }
 
   ConfigurationRejectionReason [
@@ -62,9 +54,7 @@
     PolicyWouldBreakChoreography
     IntentSynchronizationUnavailable
   ]
-  ConfigurationRejected {
-    reason ConfigurationRejectionReason
-  }
+  ConfigurationRejected ConfigurationRejectionReason
 
   OperationKind [Configure Inspect]
   UnimplementedReason [
@@ -73,7 +63,9 @@
     PolicyStoreUnavailable
   ]
   RequestUnimplemented {
-    operation OperationKind
-    reason UnimplementedReason
+    operation.OperationKind
+    reason.UnimplementedReason
   }
+
+  PolicyRevision Integer
 }

@@ -16,7 +16,12 @@ pub use nota_next::{NotaDecodeError, NotaEncode, NotaSource};
 #[rustfmt::skip]
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct PolicyRevision(Integer);
+pub struct Configure(Configuration);
+
+#[rustfmt::skip]
+#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct Inspect(Inspection);
 
 #[rustfmt::skip]
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
@@ -187,9 +192,14 @@ pub struct RequestUnimplemented {
 #[rustfmt::skip]
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct PolicyRevision(Integer);
+
+#[rustfmt::skip]
+#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub enum Input {
-    Configure(Configuration),
-    Inspect(Inspection),
+    Configure(Configure),
+    Inspect(Inspect),
 }
 
 #[rustfmt::skip]
@@ -203,39 +213,40 @@ pub enum Output {
 }
 
 #[rustfmt::skip]
-impl PolicyRevision {
-    pub fn new(payload: Integer) -> Self {
+impl Configure {
+    pub fn new(payload: Configuration) -> Self {
         Self(payload)
     }
-    pub fn payload(&self) -> &Integer {
+    pub fn payload(&self) -> &Configuration {
         &self.0
     }
-    pub fn into_payload(self) -> Integer {
+    pub fn into_payload(self) -> Configuration {
         self.0
     }
 }
 #[rustfmt::skip]
-impl From<Integer> for PolicyRevision {
-    fn from(payload: Integer) -> Self {
+impl From<Configuration> for Configure {
+    fn from(payload: Configuration) -> Self {
         Self::new(payload)
     }
 }
+
 #[rustfmt::skip]
-impl std::fmt::Display for PolicyRevision {
-    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        self.payload().fmt(formatter)
+impl Inspect {
+    pub fn new(payload: Inspection) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &Inspection {
+        &self.0
+    }
+    pub fn into_payload(self) -> Inspection {
+        self.0
     }
 }
 #[rustfmt::skip]
-impl PartialEq<u64> for PolicyRevision {
-    fn eq(&self, other: &u64) -> bool {
-        self.payload() == other
-    }
-}
-#[rustfmt::skip]
-impl PartialOrd<u64> for PolicyRevision {
-    fn partial_cmp(&self, other: &u64) -> Option<std::cmp::Ordering> {
-        self.payload().partial_cmp(other)
+impl From<Inspection> for Inspect {
+    fn from(payload: Inspection) -> Self {
+        Self::new(payload)
     }
 }
 
@@ -297,12 +308,49 @@ impl From<ConfigurationRejectionReason> for ConfigurationRejected {
 }
 
 #[rustfmt::skip]
+impl PolicyRevision {
+    pub fn new(payload: Integer) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &Integer {
+        &self.0
+    }
+    pub fn into_payload(self) -> Integer {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<Integer> for PolicyRevision {
+    fn from(payload: Integer) -> Self {
+        Self::new(payload)
+    }
+}
+#[rustfmt::skip]
+impl std::fmt::Display for PolicyRevision {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.payload().fmt(formatter)
+    }
+}
+#[rustfmt::skip]
+impl PartialEq<u64> for PolicyRevision {
+    fn eq(&self, other: &u64) -> bool {
+        self.payload() == other
+    }
+}
+#[rustfmt::skip]
+impl PartialOrd<u64> for PolicyRevision {
+    fn partial_cmp(&self, other: &u64) -> Option<std::cmp::Ordering> {
+        self.payload().partial_cmp(other)
+    }
+}
+
+#[rustfmt::skip]
 impl Input {
     pub fn configure(payload: Configuration) -> Self {
-        Self::Configure(payload)
+        Self::Configure(Configure::new(payload))
     }
-    pub fn inspect(payload: PolicySection) -> Self {
-        Self::Inspect(Inspection::new(payload))
+    pub fn inspect(payload: Inspection) -> Self {
+        Self::Inspect(Inspect::new(payload))
     }
 }
 
@@ -323,15 +371,15 @@ impl Output {
 }
 
 #[rustfmt::skip]
-impl From<Configuration> for Input {
-    fn from(payload: Configuration) -> Self {
+impl From<Configure> for Input {
+    fn from(payload: Configure) -> Self {
         Self::Configure(payload)
     }
 }
 
 #[rustfmt::skip]
-impl From<Inspection> for Input {
-    fn from(payload: Inspection) -> Self {
+impl From<Inspect> for Input {
+    fn from(payload: Inspect) -> Self {
         Self::Inspect(payload)
     }
 }
