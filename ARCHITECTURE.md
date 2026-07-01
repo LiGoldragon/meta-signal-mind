@@ -2,6 +2,10 @@
 
 *Meta signal contract for PersonaMind policy and configuration.*
 
+## 0.5 · Direction
+
+`meta-signal-mind` is the meta policy contract for PersonaMind. PersonaSpirit owns PersonaMind, so this contract is the typed authority surface Spirit uses to configure Mind's policy state. The initial surface is deliberately small: `Configure` (mutate meta-controlled policy state) and `Inspect` (read privileged policy state) only. `AuthorityMode`, `ChoreographyMode`, and `IntentSynchronizationMode` are named as policy-shaped bundles — not working graph records, not thoughts, not channel grants. This repo owns only the meta policy wire vocabulary; ordinary mind graph, work graph, query, and subscription traffic stays in `signal-mind`.
+
 ## 0 · TL;DR
 
 `meta-signal-mind` is the policy signal for PersonaMind.
