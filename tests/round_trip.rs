@@ -93,7 +93,7 @@ fn meta_mind_replies_round_trip() {
 #[test]
 fn meta_mind_operations_encode_as_contract_local_nota_heads() {
     use meta_signal_mind::Request;
-    use nota_next::{NotaEncode, NotaSource};
+    use nota::{NotaEncode, NotaSource};
 
     let operation = Operation::inspect(Inspection::new(PolicySection::All));
     let text = operation.into_request().to_nota();
