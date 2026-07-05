@@ -99,7 +99,7 @@ This repo does not own:
 
 ```text
 schema/lib.schema     meta policy wire vocabulary
-src/schema/lib.rs     checked-in schema-rust-next generated contract
+src/schema/lib.rs     checked-in schema-rust generated contract
 src/lib.rs            small compatibility aliases and accessors
 tests/round_trip.rs   frame round trips and contract-local operation witnesses
 ```
