@@ -61,14 +61,14 @@ This repo owns:
 - meta operation roots and payload records;
 - meta replies and rejection reasons;
 - the schema source and checked-in generated Rust contract;
-- rkyv and optional NOTA round-trip shape for the policy signal;
+- rkyv and optional DOTOS round-trip shape for the policy signal;
 - the contract-local `OperationKind` witness emitted by the schema generator.
 
 This repo does not own:
 
 - `mind` daemon actors;
 - `mind.redb`;
-- `bootstrap-policy.nota`;
+- `bootstrap-policy.dotos`;
 - ordinary `signal-mind` graph/work/query/subscription traffic;
 - router channel grant execution;
 - Spirit's runtime logic for deciding what policy to issue;
@@ -91,7 +91,7 @@ This repo does not own:
 
 - request operations round-trip through `Frame`;
 - replies round-trip through `Frame`;
-- NOTA request heads are contract-local verbs;
+- DOTOS request heads are contract-local verbs;
 - the public operation exposes a contract-owned `OperationKind` through
   the generated `kind()` method.
 

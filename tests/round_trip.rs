@@ -1,12 +1,12 @@
 use meta_signal_mind::{
     AuthorityMode, ChoreographyMode, Configuration, ConfigurationRejected,
-    ConfigurationRejectionReason, Configured, Frame, FrameBody, Inspection,
+    ConfigurationRejectionReason, Frame, FrameBody,
     IntentSynchronizationMode, MetaMindReply, Operation, OperationKind, PolicyRevision,
     PolicySection, PolicySnapshot, RequestUnimplemented, UnimplementedReason,
 };
 use signal_frame::{
     ExchangeIdentifier, ExchangeLane, LaneSequence, NonEmpty, Reply, RequestPayload, SessionEpoch,
-    SubReply,
+    RootCode, SubReply, VariantCode, WireRoute,
 };
 
 fn exchange() -> ExchangeIdentifier {
@@ -19,17 +19,14 @@ fn exchange() -> ExchangeIdentifier {
 
 fn configuration() -> Configuration {
     Configuration {
-        authority: AuthorityMode::IssueOrders,
-        choreography: ChoreographyMode::Decide,
-        intent_synchronization: IntentSynchronizationMode::SummaryOnly,
+        authority_mode: AuthorityMode::IssueOrders,
+        choreography_mode: ChoreographyMode::Decide,
+        intent_synchronization_mode: IntentSynchronizationMode::SummaryOnly,
     }
 }
 
 fn round_trip_request(request: Operation) -> Operation {
-    let frame = Frame::new(FrameBody::Request {
-        exchange: exchange(),
-        request: request.into_request(),
-    });
+    let frame = request.into_frame(exchange());
     let bytes = frame.encode_length_prefixed().expect("encode");
     let decoded = Frame::decode_length_prefixed(&bytes).expect("decode");
     match decoded.into_body() {
@@ -39,10 +36,13 @@ fn round_trip_request(request: Operation) -> Operation {
 }
 
 fn round_trip_reply(reply: MetaMindReply) -> MetaMindReply {
-    let frame = Frame::new(FrameBody::Reply {
-        exchange: exchange(),
-        reply: Reply::committed(NonEmpty::single(SubReply::Ok(reply))),
-    });
+    let frame = Frame::new(
+        WireRoute::new(RootCode::new(0), VariantCode::new(0)),
+        FrameBody::Reply {
+            exchange: exchange(),
+            reply: Reply::committed(NonEmpty::single(SubReply::Ok(reply))),
+        },
+    );
     let bytes = frame.encode_length_prefixed().expect("encode");
     let decoded = Frame::decode_length_prefixed(&bytes).expect("decode");
     match decoded.into_body() {
@@ -62,17 +62,17 @@ fn meta_mind_requests_round_trip() {
     let configure = Operation::configure(configuration());
     assert_eq!(round_trip_request(configure.clone()), configure);
 
-    let inspect = Operation::inspect(Inspection::new(PolicySection::All));
+    let inspect = Operation::inspect(PolicySection::All);
     assert_eq!(round_trip_request(inspect.clone()), inspect);
 }
 
 #[test]
 fn meta_mind_replies_round_trip() {
-    let configured = MetaMindReply::Configured(Configured::new(PolicyRevision::new(7)));
+    let configured = MetaMindReply::Configured(PolicyRevision::new(7));
     assert_eq!(round_trip_reply(configured.clone()), configured);
 
     let snapshot = MetaMindReply::PolicySnapshot(PolicySnapshot {
-        revision: PolicyRevision::new(7),
+        policy_revision: PolicyRevision::new(7),
         configuration: configuration(),
     });
     assert_eq!(round_trip_reply(snapshot.clone()), snapshot);
@@ -83,26 +83,26 @@ fn meta_mind_replies_round_trip() {
     assert_eq!(round_trip_reply(rejected.clone()), rejected);
 
     let unimplemented = MetaMindReply::RequestUnimplemented(RequestUnimplemented {
-        operation: OperationKind::Configure,
-        reason: UnimplementedReason::NotBuiltYet,
+        operation_kind: OperationKind::Configure,
+        unimplemented_reason: UnimplementedReason::NotBuiltYet,
     });
     assert_eq!(round_trip_reply(unimplemented.clone()), unimplemented);
 }
 
-#[cfg(feature = "nota-text")]
+#[cfg(feature = "dotos-text")]
 #[test]
-fn meta_mind_operations_encode_as_contract_local_nota_heads() {
+fn meta_mind_operations_encode_as_contract_local_dotos_heads() {
     use meta_signal_mind::Request;
-    use nota::{NotaEncode, NotaSource};
+    use dotos::{DotosEncode, DotosSource};
 
-    let operation = Operation::inspect(Inspection::new(PolicySection::All));
-    let text = operation.into_request().to_nota();
+    let operation = Operation::inspect(PolicySection::All);
+    let text = operation.into_request().to_dotos();
 
-    assert_eq!(text, "(Inspect All)");
+    assert_eq!(text, "Inspect.All");
     assert!(!text.contains("Mutate"));
     assert!(!text.contains("Match"));
 
-    let decoded = NotaSource::new(&text).parse::<Request>().expect("decode");
+    let decoded = DotosSource::new(&text).parse::<Request>().expect("decode");
     assert_eq!(decoded.payloads().head().kind(), OperationKind::Inspect);
 }
 
@@ -111,6 +111,6 @@ fn meta_mind_request_exposes_contract_owned_operation_kind() {
     let configure = Operation::configure(configuration());
     assert_eq!(configure.kind(), OperationKind::Configure);
 
-    let inspect = Operation::inspect(Inspection::new(PolicySection::Authority));
+    let inspect = Operation::inspect(PolicySection::Authority);
     assert_eq!(inspect.kind(), OperationKind::Inspect);
 }

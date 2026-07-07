@@ -9,6 +9,10 @@ pub mod schema;
 
 pub use schema::lib::*;
 
+pub type ConfigurationRejected = ConfigurationRejectedPayload;
+pub type PolicySnapshot = PolicySnapshotPayload;
+pub type RequestUnimplemented = RequestUnimplementedPayload;
+
 impl PolicyRevision {
     pub fn value(&self) -> u64 {
         *self.payload()

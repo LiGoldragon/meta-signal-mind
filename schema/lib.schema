@@ -1,71 +1,72 @@
 ;; meta-signal-mind — meta-only policy/configuration wire contract
 ;; for PersonaMind.
 ;;
-;; Wire-only: emits the rkyv + optional NOTA codec and the signal-frame
+;; Wire-only: emits the rkyv + optional DOTOS codec and the signal-frame
 ;; request/reply envelope. Ordinary mind graph, work graph, query, and
 ;; subscription traffic stays in signal-mind; runtime actors, policy
 ;; evaluation, durable state, socket binding, and command lowering live in
 ;; mind.
 
-[Configure Inspect]
-[Configured PolicySnapshot ConfigurationRejected RequestUnimplemented]
+{}
+[Configure.Configuration Inspect.Inspection]
+[Configured.PolicyRevision PolicySnapshot.PolicySnapshotPayload ConfigurationRejected.ConfigurationRejectedPayload RequestUnimplemented.RequestUnimplementedPayload]
 {
-  Configure Configuration
-  Inspect Inspection
+  Configure.Configuration
+  Inspect.Inspection
 
-  Configured PolicyRevision
-
-  AuthorityMode [
+  AuthorityMode.[
     ObserveOnly
     ProposeOrders
     IssueOrders
   ]
-  ChoreographyMode [
+  ChoreographyMode.[
     RecordOnly
     Recommend
     Decide
   ]
-  IntentSynchronizationMode [
+  IntentSynchronizationMode.[
     Disabled
     SummaryOnly
     FullRecord
   ]
-  Configuration {
-    authority.AuthorityMode
-    choreography.ChoreographyMode
-    intent_synchronization.IntentSynchronizationMode
+  Configuration.{
+    AuthorityMode
+    ChoreographyMode
+    IntentSynchronizationMode
   }
 
-  PolicySection [
+  PolicySection.[
     Authority
     Choreography
     IntentSynchronization
     All
   ]
-  Inspection PolicySection
+  Inspection.PolicySection
 
-  PolicySnapshot {
-    revision.PolicyRevision
+  PolicySnapshotPayload.{
+    PolicyRevision
     Configuration
   }
 
-  ConfigurationRejectionReason [
+  ConfigurationRejectionReason.[
     SpiritAuthorityRequired
     PolicyWouldBreakChoreography
     IntentSynchronizationUnavailable
   ]
-  ConfigurationRejected ConfigurationRejectionReason
+  ConfigurationRejectedPayload.ConfigurationRejectionReason
 
-  OperationKind [Configure Inspect]
-  UnimplementedReason [
+  OperationKind.[Configure Inspect]
+  UnimplementedReason.[
     NotBuiltYet
     DependencyNotReady
     PolicyStoreUnavailable
   ]
-  RequestUnimplemented {
-    operation.OperationKind
-    reason.UnimplementedReason
+  RequestUnimplementedPayload.{
+    OperationKind
+    UnimplementedReason
   }
 
-  PolicyRevision Integer
+  PolicyRevision.Integer
 }
+{}
+{}
