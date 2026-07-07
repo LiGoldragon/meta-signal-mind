@@ -1,3 +1,3 @@
 # meta-signal-mind
 
-Read `~/primary/AGENTS.md`, then this repository's `skills.md`.
+Read this repository's `skills.md` before editing.
