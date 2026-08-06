@@ -1,32 +1,12 @@
-//! Schema-derived meta signal contract for privileged PersonaMind policy.
+//! Authority-verified Mind meta-policy Interface.
 //!
-//! Ordinary mind graph, work graph, and subscription traffic lives in
-//! `signal-mind`. This crate carries meta policy and
-//! configuration operations issued by PersonaSpirit.
+//! Ethos owns the visible contract vocabulary. Rust exposes only encoded
+//! coordinates projected through the sealed Rust Logos boundary.
 
-#[rustfmt::skip]
+pub mod bootstrap_manifest;
 pub mod schema;
 
+pub const INTERFACE_SOURCE: &str = include_str!("../ethos/interface.ethos");
+pub const INTERFACE_RUST: &str = include_str!("schema/lib/generated.rs");
+
 pub use schema::lib::*;
-
-pub type ConfigurationRejected = ConfigurationRejectedPayload;
-pub type PolicySnapshot = PolicySnapshotPayload;
-pub type RequestUnimplemented = RequestUnimplementedPayload;
-
-impl PolicyRevision {
-    pub fn value(&self) -> u64 {
-        *self.payload()
-    }
-}
-
-impl Input {
-    pub fn kind(&self) -> OperationKind {
-        match self {
-            Self::Configure(_) => OperationKind::Configure,
-            Self::Inspect(_) => OperationKind::Inspect,
-        }
-    }
-}
-
-pub type Operation = Input;
-pub type MetaMindReply = Output;

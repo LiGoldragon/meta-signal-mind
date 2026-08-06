@@ -1,0 +1,8 @@
+Interface.{1 0 0}
+[]
+{
+  []
+  []
+  []
+  [PolicySnapshotPayload.{PolicyRevision Configuration} AuthorityMode.[ObserveOnly IssueOrders ProposeOrders] ChoreographyMode.[Decide Recommend RecordOnly] OperationKind.[Configure Inspect] ConfigurationRejectedPayload.ConfigurationRejectionReason ConfigurationRejectionReason.[IntentSynchronizationUnavailable SpiritAuthorityRequired PolicyWouldBreakChoreography] MindMetaReply.[RequestUnimplemented.RequestUnimplementedPayload PolicySnapshot.PolicySnapshotPayload Configured.PolicyRevision ConfigurationRejected.ConfigurationRejectedPayload] MindMetaRequest.[Configure.Configuration Inspect.Inspection] PolicyRevision.Integer RequestUnimplementedPayload.{OperationKind UnimplementedReason} Configure.Configuration Inspect.Inspection IntentSynchronizationMode.[Disabled SummaryOnly FullRecord] PolicySection.[Choreography IntentSynchronization Authority All] Configuration.{AuthorityMode ChoreographyMode IntentSynchronizationMode} Inspection.PolicySection UnimplementedReason.[PolicyStoreUnavailable NotBuiltYet DependencyNotReady]]
+}

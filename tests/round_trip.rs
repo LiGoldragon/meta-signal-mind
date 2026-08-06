@@ -1,116 +1,49 @@
-use meta_signal_mind::{
-    AuthorityMode, ChoreographyMode, Configuration, ConfigurationRejected,
-    ConfigurationRejectionReason, Frame, FrameBody,
-    IntentSynchronizationMode, MetaMindReply, Operation, OperationKind, PolicyRevision,
-    PolicySection, PolicySnapshot, RequestUnimplemented, UnimplementedReason,
-};
-use signal_frame::{
-    ExchangeIdentifier, ExchangeLane, LaneSequence, NonEmpty, Reply, RequestPayload, SessionEpoch,
-    RootCode, SubReply, VariantCode, WireRoute,
-};
-
-fn exchange() -> ExchangeIdentifier {
-    ExchangeIdentifier::new(
-        SessionEpoch::new(1),
-        ExchangeLane::Connector,
-        LaneSequence::first(),
+use dotos::{DotosEncode, DotosSource};
+use meta_signal_mind::*;
+fn exchange() -> signal_frame::ExchangeIdentifier {
+    signal_frame::ExchangeIdentifier::new(
+        signal_frame::SessionEpoch::new(1),
+        signal_frame::ExchangeLane::Connector,
+        signal_frame::LaneSequence::first(),
     )
 }
-
-fn configuration() -> Configuration {
-    Configuration {
-        authority_mode: AuthorityMode::IssueOrders,
-        choreography_mode: ChoreographyMode::Decide,
-        intent_synchronization_mode: IntentSynchronizationMode::SummaryOnly,
-    }
-}
-
-fn round_trip_request(request: Operation) -> Operation {
-    let frame = request.into_frame(exchange());
-    let bytes = frame.encode_length_prefixed().expect("encode");
-    let decoded = Frame::decode_length_prefixed(&bytes).expect("decode");
-    match decoded.into_body() {
-        FrameBody::Request { request, .. } => request.payloads().head().clone(),
-        other => panic!("expected request operation, got {other:?}"),
-    }
-}
-
-fn round_trip_reply(reply: MetaMindReply) -> MetaMindReply {
-    let frame = Frame::new(
-        WireRoute::new(RootCode::new(0), VariantCode::new(0)),
-        FrameBody::Reply {
-            exchange: exchange(),
-            reply: Reply::committed(NonEmpty::single(SubReply::Ok(reply))),
-        },
+#[test]
+fn authority_projected_request_round_trips_through_dotos_and_bound_frame() {
+    let request = z2VU1V::z2VPpf(z2VaGZ {
+        field_0: z2VdFT::z2VNyX,
+        field_1: z2VSX6::z2VT4y,
+        field_2: z2VYng::z2VZBx,
+    });
+    let text = request.to_dotos();
+    assert_eq!(
+        DotosSource::new(&text)
+            .parse::<z2VU1V>()
+            .expect("Dotos decodes"),
+        request
     );
-    let bytes = frame.encode_length_prefixed().expect("encode");
-    let decoded = Frame::decode_length_prefixed(&bytes).expect("decode");
-    match decoded.into_body() {
-        FrameBody::Reply { reply, .. } => match reply {
-            Reply::Accepted { per_operation, .. } => match per_operation.into_head() {
-                SubReply::Ok(payload) => payload,
-                other => panic!("expected accepted reply payload, got {other:?}"),
-            },
-            other => panic!("expected accepted reply, got {other:?}"),
-        },
-        other => panic!("expected reply operation, got {other:?}"),
-    }
+    let bytes = request
+        .clone()
+        .encode_request_frame(exchange())
+        .expect("frame encodes");
+    let (found_exchange, decoded) =
+        ContractMarker::decode_single_request(&bytes).expect("frame decodes");
+    assert_eq!(found_exchange, exchange());
+    assert_eq!(decoded, request);
 }
-
 #[test]
-fn meta_mind_requests_round_trip() {
-    let configure = Operation::configure(configuration());
-    assert_eq!(round_trip_request(configure.clone()), configure);
-
-    let inspect = Operation::inspect(PolicySection::All);
-    assert_eq!(round_trip_request(inspect.clone()), inspect);
-}
-
-#[test]
-fn meta_mind_replies_round_trip() {
-    let configured = MetaMindReply::Configured(PolicyRevision::new(7));
-    assert_eq!(round_trip_reply(configured.clone()), configured);
-
-    let snapshot = MetaMindReply::PolicySnapshot(PolicySnapshot {
-        policy_revision: PolicyRevision::new(7),
-        configuration: configuration(),
+fn authority_projected_reply_round_trips_through_dotos_and_archive() {
+    let reply = z2VTar::z2VW97(z2Vaeg {
+        field_0: z2VYqg::z2VPdd,
+        field_1: z2VXPw::z2VWnx,
     });
-    assert_eq!(round_trip_reply(snapshot.clone()), snapshot);
-
-    let rejected = MetaMindReply::ConfigurationRejected(ConfigurationRejected::new(
-        ConfigurationRejectionReason::PolicyWouldBreakChoreography,
-    ));
-    assert_eq!(round_trip_reply(rejected.clone()), rejected);
-
-    let unimplemented = MetaMindReply::RequestUnimplemented(RequestUnimplemented {
-        operation_kind: OperationKind::Configure,
-        unimplemented_reason: UnimplementedReason::NotBuiltYet,
-    });
-    assert_eq!(round_trip_reply(unimplemented.clone()), unimplemented);
-}
-
-#[cfg(feature = "dotos-text")]
-#[test]
-fn meta_mind_operations_encode_as_contract_local_dotos_heads() {
-    use meta_signal_mind::Request;
-    use dotos::{DotosEncode, DotosSource};
-
-    let operation = Operation::inspect(PolicySection::All);
-    let text = operation.into_request().to_dotos();
-
-    assert_eq!(text, "Inspect.All");
-    assert!(!text.contains("Mutate"));
-    assert!(!text.contains("Match"));
-
-    let decoded = DotosSource::new(&text).parse::<Request>().expect("decode");
-    assert_eq!(decoded.payloads().head().kind(), OperationKind::Inspect);
-}
-
-#[test]
-fn meta_mind_request_exposes_contract_owned_operation_kind() {
-    let configure = Operation::configure(configuration());
-    assert_eq!(configure.kind(), OperationKind::Configure);
-
-    let inspect = Operation::inspect(PolicySection::Authority);
-    assert_eq!(inspect.kind(), OperationKind::Inspect);
+    let text = reply.to_dotos();
+    assert_eq!(
+        DotosSource::new(&text)
+            .parse::<z2VTar>()
+            .expect("Dotos decodes"),
+        reply
+    );
+    let bytes = rkyv::to_bytes::<rkyv::rancor::Error>(&reply).expect("archives");
+    let recovered = rkyv::from_bytes::<z2VTar, rkyv::rancor::Error>(&bytes).expect("recovers");
+    assert_eq!(recovered, reply);
 }

@@ -62,7 +62,7 @@ This repo owns:
 - meta replies and rejection reasons;
 - the schema source and checked-in generated Rust contract;
 - rkyv and optional DOTOS round-trip shape for the policy signal;
-- the contract-local `OperationKind` witness emitted by the schema generator.
+- the contract-local operation route witnessed by the encoded projection.
 
 This repo does not own:
 
@@ -98,10 +98,12 @@ This repo does not own:
 ## Code Map
 
 ```text
-schema/lib.schema     meta policy wire vocabulary
-src/schema/lib.rs     checked-in schema-rust generated contract
-src/lib.rs            small compatibility aliases and accessors
-tests/round_trip.rs   frame round trips and contract-local operation witnesses
+ethos/interface.ethos       authority-verified meta-policy Interface
+src/bootstrap_manifest.rs  producer-owned opaque authority seats
+src/schema/lib/generated.rs Rust Logos' checked encoded projection
+src/schema/lib/behavior.rs archive, Dotos, and bound-frame behavior
+src/lib.rs                  source witnesses + encoded projection export
+tests/round_trip.rs         bound-frame, archive, and Dotos witnesses
 ```
 
 ## See Also
