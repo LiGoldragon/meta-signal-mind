@@ -24,7 +24,7 @@ The initial surface is deliberately small:
 
 ## 1 · Contract Surface
 
-| Operation | Projected Sema class | Meaning |
+| Operation | Projected Memory class | Meaning |
 |---|---|---|
 | `Configure` | `Mutate` | Apply a Spirit-issued policy configuration to PersonaMind. |
 | `Inspect` | `Match` | Read privileged policy state. |
@@ -36,7 +36,7 @@ The initial surface is deliberately small:
 | `ConfigurationRejected` | The configuration was understood but rejected by domain policy. |
 | `RequestUnimplemented` | The request is in the contract but not implemented by the current runtime. |
 
-The Sema classes above are daemon-side projections. The wire carries
+The Memory classes above are daemon-side projections. The wire carries
 contract-local operation roots only; there is no public `Mutate` or
 `Match` wrapper.
 
@@ -79,7 +79,7 @@ This repo does not own:
 - The contract exposes meta policy operations, not ordinary mind
   graph operations.
 - Every operation root is a contract-local verb in verb form.
-- The wire shape contains no public Sema wrapper such as `Mutate` or
+- The wire shape contains no public Memory wrapper such as `Mutate` or
   `Match`.
 - Policy revisions are daemon-minted reply data, not request payloads.
 - The contract crate contains no runtime actors, database handles,
@@ -112,6 +112,6 @@ tests/round_trip.rs         bound-frame, archive, and Dotos witnesses
 - `../mind/ARCHITECTURE.md`
 - `../persona-spirit/ARCHITECTURE.md`
 - `../signal-frame/ARCHITECTURE.md`
-- `../signal-sema/ARCHITECTURE.md`
+- `../signal-memory/ARCHITECTURE.md`
 - `~/primary/skills/contract-repo.md`
 - `~/primary/skills/component-triad.md`

@@ -11,11 +11,11 @@ use rust_logos::{
     FixtureRustVocabulary, FixtureRustVocabularyIds, RustLogos, RustTypePath, RustTypePathResolver,
 };
 use schema_rust::{bootstrap::BootstrapInterfaceGeneration, build::CargoEthosSourceMetadata};
-use sema_translator::bootstrap::{
+use memory_translator::bootstrap::{
     AuthorizedBootstrapTransition, BootstrapAuthorityIdentity, BootstrapAuthorityRevision,
     BootstrapTransactionAssembler,
 };
-use signal_sema_translator::{VocabularyEncodedId, VocabularyRoot};
+use signal_memory_translator::{VocabularyEncodedId, VocabularyRoot};
 use structural_codec::EncodedNameResolver;
 
 #[path = "src/bootstrap_manifest.rs"]
@@ -112,8 +112,8 @@ fn fixed_specifications() -> Vec<(AuthoritySeat, Vec<SchemaRole>)> {
             vec![SchemaRole::FileKind(EthosKind::Nexus)],
         ),
         (
-            manifest::SEMA_SEAT,
-            vec![SchemaRole::FileKind(EthosKind::Sema)],
+            manifest::MEMORY_SEAT,
+            vec![SchemaRole::FileKind(EthosKind::Memory)],
         ),
         (
             manifest::INPUT_SEAT,
@@ -186,7 +186,7 @@ fn bootstrap_catalog() -> BootstrapCatalog {
         BootstrapPriorIdentities {
             interface_kind: universal(manifest::INTERFACE_SEAT.local),
             nexus_kind: universal(manifest::NEXUS_SEAT.local),
-            sema_kind: universal(manifest::SEMA_SEAT.local),
+            memory_kind: universal(manifest::MEMORY_SEAT.local),
             input_role: universal(manifest::INPUT_SEAT.local),
             output_role: universal(manifest::OUTPUT_SEAT.local),
             refusal_role: universal(manifest::REFUSAL_SEAT.local),
